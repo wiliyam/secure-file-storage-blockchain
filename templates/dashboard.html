@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Secure File Storage</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .nav {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .nav a {
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .nav a:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        /* Standardized Button System */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            color: #212529;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        
+        .welcome {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 15px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .user-info {
+            background-color: #d4edda;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+        
+        .upload-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .upload-form {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #2196f3;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            font-size: 1em;
+        }
+        
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .upload-form button {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+        
+        .recent-files {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #6c757d;
+        }
+        
+        .files-list {
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        
+        .file-details {
+            margin-top: 5px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-download, .btn-delete {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-download {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-download:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .security-features {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .security-features h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        
+        .security-features ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .security-features li {
+            margin-bottom: 8px;
+            color: #856404;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .flash-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .flash-message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Secure File Storage Dashboard</h1>
+            <p>Encrypted file storage with blockchain integration</p>
+        </div>
+        
+        <div class="content">
+            <div class="nav">
+                <a href="{{ url_for('list_files') }}">📁 My Files</a>
+                <a href="{{ url_for('get_public_key') }}">🔑 My Public Key</a>
+                <a href="{{ url_for('blockchain_status') }}">🔗 Blockchain Status</a>
+                <a href="{{ url_for('logout') }}">🚪 Logout</a>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message|safe }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <div class="welcome">
+                <h2>Welcome to your Secure Dashboard!</h2>
+                <p>Your files are protected with military-grade encryption and logged on the blockchain for complete transparency.</p>
+            </div>
+            
+            <div class="user-info">
+                <h3>👤 User Information</h3>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>User ID:</strong> {{ user.id }}</p>
+                <p><strong>Role:</strong> {{ user.role|title }}</p>
+            </div>
+            
+            <!-- File Upload Section -->
+            <div class="upload-section">
+                <h3>🔒 Encrypted File Upload</h3>
+                <p>Upload files that will be encrypted with AES-256 before storage and digitally signed with ECDSA. All uploads are logged on the blockchain for complete audit trail.</p>
+                
+                <form method="POST" action="{{ url_for('upload_file') }}" enctype="multipart/form-data" class="upload-form">
+                    <div class="form-group">
+                        <label for="file">📄 Select File to Upload:</label>
+                        <input type="file" id="file" name="file" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">🔐 Password (for digital signing):</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password to sign the file">
+                    </div>
+                    <button type="submit">🚀 Upload, Encrypt & Sign File</button>
+                </form>
+            </div>
+            
+            <!-- Recent Files Section -->
+            {% if files %}
+            <div class="recent-files">
+                <h3>📁 Recent Files</h3>
+                <div class="files-list">
+                    {% for file in files %}
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-name">{{ file.filename }}</div>
+                            <div class="file-details">
+                                Size: {{ "%.2f"|format(file.file_size / 1024) }} KB | 
+                                Uploaded: {{ file.upload_date.strftime('%Y-%m-%d at %H:%M') }}
+                                {% if file.digital_signature %}
+                                | <span style="color: #28a745;">✅ Digitally Signed</span>
+                                {% endif %}
+                                {% if file.blockchain_file_id %}
+                                | <span style="color: #007bff;">🔗 Blockchain ID: {{ file.blockchain_file_id }}</span>
+                                {% endif %}
+                            </div>
+                            {% if file.digital_signature %}
+                            <div class="signature-info" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; border-left: 3px solid #28a745;">
+                                <div style="font-weight: bold; color: #28a745; margin-bottom: 5px;">🔐 Digital Signature:</div>
+                                <div style="font-family: monospace; font-size: 0.85em; color: #333; word-break: break-all; background: white; padding: 8px; border-radius: 3px; border: 1px solid #e9ecef;">
+                                    {{ file.digital_signature }}
+                                </div>
+                                <div style="font-size: 0.8em; color: #6c757d; margin-top: 5px;">
+                                    This signature verifies the file's authenticity and integrity
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if file.blockchain_tx_hash and file.blockchain_tx_hash != "pending" %}
+                            <div style="margin-top: 5px; font-size: 0.9em;">
+                                <a href="https://sepolia.etherscan.io/tx/{{ file.blockchain_tx_hash }}" target="_blank" style="color: #007bff; text-decoration: none;">
+                                    🔗 View Upload Transaction on Etherscan
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="file-actions">
+                            <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn-download">⬇️ Download</a>
+                            <a href="{{ url_for('delete_file', file_id=file.id) }}" class="btn-delete" onclick="return confirm('Are you sure you want to delete {{ file.filename }}?')">🗑️ Delete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <p><a href="{{ url_for('list_files') }}" style="color: #007bff; font-weight: bold;">View All Files →</a></p>
+            </div>
+            {% endif %}
+            
+            <div class="security-features">
+                <h3>🛡️ Security Features</h3>
+                <ul>
+                    <li><strong>AES-256 Encryption:</strong> Files encrypted before storage</li>
+                    <li><strong>ECDSA Digital Signatures:</strong> Files digitally signed for authenticity</li>
+                    <li><strong>Blockchain Logging:</strong> All operations logged on Sepolia testnet</li>
+                    <li><strong>User-Specific Keys:</strong> Each user has unique encryption keys</li>
+                    <li><strong>Signature Verification:</strong> Automatic verification on download</li>
+                    <li><strong>Access Control:</strong> Role-based permissions and file sharing</li>
+                    <li><strong>Audit Trail:</strong> Complete transaction history on blockchain</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

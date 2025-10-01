@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - {{ file.filename }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .navigation {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .nav-link {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: #e9ecef;
+            text-decoration: none;
+        }
+        
+        .file-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .file-info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        .file-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            min-height: 50px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-family: monospace;
+            font-size: 0.85em;
+            word-break: break-all;
+            line-height: 1.4;
+            padding: 5px 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .transactions-section {
+            margin-top: 30px;
+        }
+        
+        .transactions-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .transaction-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #28a745;
+            transition: all 0.3s ease;
+        }
+        
+        .transaction-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .transaction-type {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .transaction-type.upload {
+            color: #28a745;
+        }
+        
+        .transaction-type.access_grant {
+            color: #007bff;
+        }
+        
+        .transaction-type.access_revoke {
+            color: #dc3545;
+        }
+        
+        .transaction-timestamp {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .transaction-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .transaction-detail {
+            display: flex;
+            flex-direction: column;
+            min-height: 60px;
+        }
+        
+        .transaction-detail-label {
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .transaction-detail-value {
+            color: #333;
+            font-family: monospace;
+            font-size: 0.85em;
+            word-break: break-all;
+            line-height: 1.4;
+            padding: 5px 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            flex-grow: 1;
+        }
+        
+        /* Standardized Button System */
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 2px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        
+        .no-transactions {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .flash-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Transaction History</h1>
+            <p>Blockchain transaction log for file integrity verification</p>
+        </div>
+        
+        <div class="content">
+            <div class="navigation">
+                <a href="{{ url_for('index') }}" class="nav-link">🏠 Dashboard</a>
+                <a href="{{ url_for('list_files') }}" class="nav-link">📁 My Files</a>
+                <a href="{{ url_for('blockchain_status') }}" class="nav-link">🔗 Blockchain Status</a>
+                <a href="{{ url_for('get_public_key') }}" class="nav-link">🔑 Public Key</a>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message|safe }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <div class="file-info">
+                <h3>📄 File Information</h3>
+                <div class="file-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Filename:</span>
+                        <span class="detail-value">{{ file.filename }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">File Size:</span>
+                        <span class="detail-value">{{ "%.2f"|format(file.file_size / 1024) }} KB</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Upload Date:</span>
+                        <span class="detail-value">{{ file.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner:</span>
+                        <span class="detail-value">{{ file.user.email }}</span>
+                    </div>
+                    {% if file.blockchain_file_id %}
+                    <div class="detail-item">
+                        <span class="detail-label">Blockchain File ID:</span>
+                        <span class="detail-value">{{ file.blockchain_file_id }}</span>
+                    </div>
+                    {% endif %}
+                    {% if file.digital_signature %}
+                    <div class="detail-item">
+                        <span class="detail-label">Digital Signature:</span>
+                        <div style="margin-top: 5px;">
+                            <div style="font-family: monospace; font-size: 0.8em; color: #333; word-break: break-all; background: #f8f9fa; padding: 8px; border-radius: 4px; border: 1px solid #e9ecef;">
+                                {{ file.digital_signature }}
+                            </div>
+                            <div style="font-size: 0.75em; color: #28a745; margin-top: 3px;">
+                                ✅ Verified - File authenticity confirmed
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="transactions-section">
+                <h3>🔗 Blockchain Transactions</h3>
+                
+                {% if transactions %}
+                    {% for tx in transactions %}
+                    <div class="transaction-item">
+                        <div class="transaction-header">
+                            <div class="transaction-type {{ tx.transaction_type }}">
+                                {% if tx.transaction_type == 'upload' %}
+                                    📤 File Upload
+                                {% elif tx.transaction_type == 'access_grant' %}
+                                    🔓 Access Granted
+                                {% elif tx.transaction_type == 'access_revoke' %}
+                                    🔒 Access Revoked
+                                {% else %}
+                                    🔗 {{ tx.transaction_type|title }}
+                                {% endif %}
+                            </div>
+                            <div class="transaction-timestamp">
+                                {{ tx.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-details">
+                            <div class="transaction-detail">
+                                <div class="transaction-detail-label">Transaction Hash:</div>
+                                <div class="transaction-detail-value">{{ tx.transaction_hash }}</div>
+                            </div>
+                            
+                            {% if tx.blockchain_file_id %}
+                            <div class="transaction-detail">
+                                <div class="transaction-detail-label">Blockchain File ID:</div>
+                                <div class="transaction-detail-value">{{ tx.blockchain_file_id }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if tx.block_number %}
+                            <div class="transaction-detail">
+                                <div class="transaction-detail-label">Block Number:</div>
+                                <div class="transaction-detail-value">{{ tx.block_number }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if tx.gas_used %}
+                            <div class="transaction-detail">
+                                <div class="transaction-detail-label">Gas Used:</div>
+                                <div class="transaction-detail-value">{{ tx.gas_used }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if tx.gas_price %}
+                            <div class="transaction-detail">
+                                <div class="transaction-detail-label">Gas Price:</div>
+                                <div class="transaction-detail-value">{{ tx.gas_price }} Gwei</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <a href="{{ tx.etherscan_url }}" target="_blank" class="btn btn-primary btn-sm">
+                                🔗 View on Etherscan
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-transactions">
+                        <h3>No Blockchain Transactions Found</h3>
+                        <p>This file has no recorded blockchain transactions yet.</p>
+                        <p>Transactions will appear here when:</p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>File is uploaded to blockchain</li>
+                            <li>Access is granted to other users</li>
+                            <li>Access is revoked from users</li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

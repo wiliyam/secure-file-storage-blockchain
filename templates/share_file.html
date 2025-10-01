@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share File - Simple Web App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .nav {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav a {
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .nav a:hover {
+            background-color: #0056b3;
+        }
+        .file-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .share-form {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .btn-share {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-share:hover {
+            background-color: #218838;
+        }
+        
+        /* Standardized Button System */
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 2px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        .access-list {
+            margin-top: 30px;
+        }
+        .access-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #dee2e6;
+        }
+        .permission-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .permission-read {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .permission-write {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .permission-admin {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .btn-revoke {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .btn-revoke:hover {
+            background-color: #c82333;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Share File</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="nav">
+            <a href="{{ url_for('index') }}">Dashboard</a>
+            <a href="{{ url_for('list_files') }}">My Files</a>
+            <a href="{{ url_for('shared_files') }}">Shared Files</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        
+        <div class="file-info">
+            <h3>📁 {{ file.filename }}</h3>
+            <p><strong>Size:</strong> {{ "%.2f"|format(file.file_size / 1024) }} KB</p>
+            <p><strong>Uploaded:</strong> {{ file.upload_date.strftime('%Y-%m-%d at %H:%M') }}</p>
+            {% if file.digital_signature %}
+            <p><strong>Status:</strong> <span style="color: #28a745;">✅ Digitally Signed</span></p>
+            <div style="margin-top: 10px;">
+                <strong>🔐 Digital Signature:</strong>
+                <div style="margin-top: 5px;">
+                    <div style="font-family: monospace; font-size: 0.8em; color: #333; word-break: break-all; background: #f8f9fa; padding: 8px; border-radius: 4px; border: 1px solid #e9ecef;">
+                        {{ file.digital_signature }}
+                    </div>
+                    <div style="font-size: 0.75em; color: #28a745; margin-top: 3px;">
+                        ✅ Verified - File authenticity confirmed
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="share-form">
+            <h3>👥 Share with User</h3>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" required placeholder="user@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="permission">Permission Level:</label>
+                    <select id="permission" name="permission" required>
+                        <option value="read">Read Only - Can download and view</option>
+                        <option value="write">Write - Can download and modify</option>
+                        <option value="admin">Admin - Full access including sharing</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expires_days">Expires in (days, optional):</label>
+                    <input type="number" id="expires_days" name="expires_days" min="1" max="365" placeholder="Leave empty for no expiration">
+                </div>
+                
+                <button type="submit" class="btn btn-success btn-lg">🔗 Grant Access</button>
+            </form>
+        </div>
+        
+        {% if current_access or invitations %}
+        <div class="access-list">
+            <h3>👥 Current Access</h3>
+            
+            {% for access in current_access %}
+            <div class="access-item">
+                <div>
+                    <strong>{{ access.user.email }}</strong>
+                    <span class="permission-badge permission-{{ access.permission }}">{{ access.permission|title }}</span>
+                    <small style="color: #6c757d;">
+                        Granted: {{ access.granted_at.strftime('%Y-%m-%d %H:%M') }}
+                        {% if access.expires_at %}
+                        | Expires: {{ access.expires_at.strftime('%Y-%m-%d %H:%M') }}
+                        {% endif %}
+                    </small>
+                </div>
+                <a href="{{ url_for('revoke_access', file_id=file.id, user_id=access.user.id) }}" 
+                   class="btn btn-danger btn-sm" 
+                   onclick="return confirm('Are you sure you want to revoke access for {{ access.user.email }}?')">
+                    Revoke
+                </a>
+            </div>
+            {% endfor %}
+            
+            {% for invitation in invitations %}
+            <div class="access-item">
+                <div>
+                    <strong>{{ invitation.invited_email }}</strong>
+                    <span class="permission-badge permission-{{ invitation.permission }}">{{ invitation.permission|title }}</span>
+                    <small style="color: #6c757d;">
+                        Invited: {{ invitation.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        {% if invitation.expires_at %}
+                        | Expires: {{ invitation.expires_at.strftime('%Y-%m-%d %H:%M') }}
+                        {% endif %}
+                        <span style="color: #ffc107;">(Pending - User not registered yet)</span>
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <p><strong>🔐 Security Features:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>All file access is logged for audit purposes</li>
+                <li>Access can be revoked at any time</li>
+                <li>Time-based expiration available</li>
+                <li>Permission levels: Read, Write, Admin</li>
+                <li>Files remain encrypted even when shared</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
