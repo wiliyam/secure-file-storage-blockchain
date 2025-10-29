@@ -1,104 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Web App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .nav {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .nav a {
-            margin: 0 15px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-        }
-        .nav a:hover {
-            background-color: #0056b3;
-        }
-        .flash-messages {
-            margin: 20px 0;
-        }
-        .flash-message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-        .flash-message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .flash-message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .flash-message.info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secure File Storage</title>
+
+  <!-- Typography & Color System -->
+  <style>
+    :root{
+      /* Brand palette */
+      --bg: #0f172a;           /* slate-900 */
+      --bg-soft:#111827;       /* gray-900 */
+      --card:#0b1220;          /* deep slate */
+      --text:#e5e7eb;          /* gray-200 */
+      --muted:#9ca3af;         /* gray-400 */
+      --primary:#6366f1;       /* indigo-500 */
+      --primary-600:#5457ea;   /* hover */
+      --ring:#a5b4fc;          /* indigo-300 */
+      --success-bg:#0f2e22;
+      --success-bd:#22c55e;
+      --success-tx:#86efac;
+      --error-bg:#34151a;
+      --error-bd:#f87171;
+      --error-tx:#fecaca;
+      --info-bg:#0e2533;
+      --info-bd:#38bdf8;
+      --info-tx:#bae6fd;
+      --surface:#0b1220;
+      --card-shadow: 0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.03);
+      --radius: 14px;
+    }
+
+    /* Light mode */
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f7fb;
+        --bg-soft:#eef1f6;
+        --card:#ffffff;
+        --text:#0f172a;
+        --muted:#475569;
+        --primary:#4f46e5;
+        --primary-600:#4338ca;
+        --ring:#a5b4fc;
+        --success-bg:#ecfdf5;
+        --success-bd:#10b981;
+        --success-tx:#065f46;
+        --error-bg:#fef2f2;
+        --error-bd:#ef4444;
+        --error-tx:#7f1d1d;
+        --info-bg:#eff6ff;
+        --info-bd:#3b82f6;
+        --info-tx:#1e3a8a;
+        --surface:#ffffff;
+        --card-shadow: 0 10px 30px rgba(2,6,23,.08);
+      }
+    }
+
+    /* Base layout */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,.25), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(56,189,248,.18), transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    }
+
+    .shell{
+      min-height:100dvh;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+    }
+
+    .container{
+      max-width: 960px;
+      margin: clamp(16px, 4vw, 48px) auto;
+      padding: clamp(18px, 2.4vw, 28px);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(6px);
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content: center;
+      gap:12px;
+      text-align:center;
+      padding-bottom: 8px;
+    }
+    .brand-mark{
+      width:40px;height:40px;border-radius:12px;
+      background: linear-gradient(135deg, var(--primary), #22d3ee);
+      box-shadow: 0 10px 20px rgba(99,102,241,.35);
+    }
+    h1{
+      margin:0;
+      font-size: clamp(22px, 3.3vw, 32px);
+      letter-spacing:.2px;
+      font-weight:700;
+    }
+    .subtitle{
+      margin-top:6px;
+      color:var(--muted);
+      font-size: 0.98rem;
+    }
+
+    /* Flash messages */
+    .flash-messages{ margin: 18px 0 8px; }
+    .flash-message{
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      line-height:1.4;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .flash-message::before{
+      content:"";
+      width:10px;height:10px; margin-top:6px; flex:0 0 10px; border-radius:50%;
+      background: currentColor;
+      opacity:.85;
+    }
+    .flash-message.success{ background:var(--success-bg); border-color:var(--success-bd); color:var(--success-tx);}
+    .flash-message.error{   background:var(--error-bg);   border-color:var(--error-bd);   color:var(--error-tx);}
+    .flash-message.info{    background:var(--info-bg);    border-color:var(--info-bd);    color:var(--info-tx);}
+
+    /* Nav / Auth actions */
+    .nav{
+      margin-top: 14px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap: 10px 14px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+    }
+    .hello{
+      color:var(--muted);
+      margin-right: 6px;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid transparent;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight:600;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:10px;
+      transition: transform .045s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(99,102,241,.18);
+    }
+    .btn:focus-visible{
+      box-shadow: 0 0 0 3px var(--ring), 0 6px 16px rgba(99,102,241,.18);
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn-primary{
+      background: var(--primary);
+      color:white;
+    }
+    .btn-primary:hover{ background: var(--primary-600); }
+    .btn-ghost{
+      background: transparent;
+      border-color: rgba(255,255,255,.14);
+      color: var(--text);
+      box-shadow: none;
+    }
+    .btn-ghost:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.22);
+    }
+
+    /* Content sections */
+    .section{
+      margin-top: 30px;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      padding: clamp(18px, 2vw, 26px);
+    }
+    .section h2{
+      margin-top:0;
+      font-size: clamp(18px, 2.6vw, 24px);
+    }
+    .lead{
+      color: var(--muted);
+      max-width: 58ch;
+      margin: 8px auto 0;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer{
+      color:var(--muted);
+      font-size:.9rem;
+      text-align:center;
+      padding: 18px 12px 28px;
+    }
+
+    /* Reduce motion for those who prefer it */
+    @media (prefers-reduced-motion: reduce){
+      .btn, .flash-message{ transition: none !important; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to Simple Web App</h1>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        
-        <div class="nav">
-            {% if current_user.is_authenticated %}
-                <p>Hello, {{ current_user.email }}!</p>
-                <a href="{{ url_for('logout') }}">Logout</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
-                <a href="{{ url_for('register') }}">Register</a>
-            {% endif %}
+  <div class="shell">
+
+    <main class="container" role="main">
+      <header aria-label="App header">
+        <div>
+          <h1>Secure File Storage</h1>
+          <div class="subtitle">Secure file storage using Blockchain</div>
         </div>
-        
-        <div style="text-align: center; margin-top: 40px;">
-            {% if current_user.is_authenticated %}
-                <h2>Dashboard</h2>
-                <p>You are successfully logged in!</p>
-                <p>This is your personal dashboard.</p>
-            {% else %}
-                <h2>Get Started</h2>
-                <p>Please login or register to access your dashboard.</p>
-            {% endif %}
-        </div>
-    </div>
+      </header>
+
+      <!-- Flash Messages  -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-messages" role="status" aria-live="polite">
+            {% for category, message in messages %}
+              <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Auth / Nav  -->
+      <nav class="nav" aria-label="Primary actions">
+        {% if current_user.is_authenticated %}
+          <span class="hello">Hello, <strong>{{ current_user.email }}</strong>!</span>
+          <a class="btn btn-ghost" href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+          <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+          <a class="btn btn-ghost" href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+      </nav>
+
+      <!-- Main section  -->
+      <section class="section" aria-label="Primary content">
+        {% if current_user.is_authenticated %}
+          <h2>Dashboard</h2>
+          <p class="lead">
+            You are successfully logged in. This is your personal dashboard.
+            Explore features, manage your profile, and stay up to date.
+          </p>
+        {% else %}
+          <h2>Get Started</h2>
+          <p class="lead">
+            Please login or register to access your dashboard and unlock all features.
+          </p>
+        {% endif %}
+      </section>
+    </main>
+
+    <footer>
+      © 2025 • Secure File Storage Blockchain • Designed with care
+    </footer>
+
+  </div>
 </body>
 </html>
-
-

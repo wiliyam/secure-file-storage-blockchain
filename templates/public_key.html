@@ -1,147 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Public Key - Simple Web App</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Public Key — Secure File Storage</title>
+
     <style>
+        :root {
+            --bg: #0f172a;
+            --bg-soft: #111827;
+            --card: #0b1220;
+            --surface: #0c1424;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --primary: #6366f1;
+            --primary-600: #5457ea;
+            --accent: #22d3ee;
+            --ring: #a5b4fc;
+            --success: #22c55e;
+            --info: #3b82f6;
+            --shadow: 0 16px 40px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .04);
+            --radius: 16px;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #f6f7fb;
+                --bg-soft: #eef1f6;
+                --card: #ffffff;
+                --surface: #ffffff;
+                --text: #0f172a;
+                --muted: #475569;
+                --primary: #4f46e5;
+                --primary-600: #4338ca;
+                --accent: #06b6d4;
+                --ring: #a5b4fc;
+                --shadow: 0 16px 40px rgba(2, 6, 23, .08);
+            }
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 600px at 10% -10%, rgba(99, 102, 241, .25), transparent 60%),
+                radial-gradient(900px 500px at 110% 10%, rgba(34, 211, 238, .18), transparent 60%),
+                linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+            padding: 24px 0;
+            min-height: 100vh;
+        }
+
+        /* Top Nav Bar */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(11, 18, 32, .85);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .topbar-inner {
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
         }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: .2px;
+            font-size: clamp(18px, 2.4vw, 20px);
         }
-        h1 {
-            color: #333;
-            text-align: center;
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .nav {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .nav a {
-            margin: 0 15px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
+
+        .nav-links a {
             text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
+            color: white;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: var(--primary);
+            border: 1px solid transparent;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, .25);
+            transition: transform .05s ease, background-color .12s ease;
         }
-        .nav a:hover {
-            background-color: #0056b3;
+
+        .nav-links a:hover {
+            background: var(--primary-600);
+            transform: translateY(-1px);
         }
+
+        .nav-links a.logout {
+            background: #6c757d;
+        }
+
+        .nav-links a.logout:hover {
+            background: #545b62;
+        }
+
+        .nav-links a.active {
+            outline: 2px solid var(--ring);
+        }
+
+        /* Page shell */
+        .container {
+            max-width: 1100px;
+            margin: 16px auto 0;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, .06);
+            overflow: clip;
+        }
+
+        .header {
+            padding: 24px;
+            background:
+                linear-gradient(135deg, rgba(99, 102, 241, .18), rgba(34, 211, 238, .12)),
+                linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, 0));
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .header h1 {
+            margin: 0 0 4px;
+            font-size: clamp(22px, 3.2vw, 30px);
+            font-weight: 800;
+        }
+
+        .header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .content {
+            padding: 26px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 14px;
+            padding: 18px;
+            margin: 18px 0;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
         .key-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 4px solid #28a745;
+            border-left: 4px solid var(--success);
         }
+
         .public-key {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            background: #0b1220;
+            border: 1px solid rgba(255, 255, 255, .08);
+            padding: 14px;
+            border-radius: 10px;
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: .9rem;
             word-break: break-all;
             white-space: pre-wrap;
-            margin: 15px 0;
+            color: #d1d5db;
         }
+
         .info-section {
-            background-color: #d1ecf1;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #17a2b8;
+            border-left: 4px solid var(--info);
+            background: linear-gradient(135deg, rgba(59, 130, 246, .14), rgba(99, 102, 241, .12));
         }
+
         .copy-btn {
-            background-color: #28a745;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-weight: 800;
             cursor: pointer;
+            box-shadow: 0 8px 18px rgba(99, 102, 241, .28);
+            transition: transform .05s ease, filter .12s ease;
             margin-top: 10px;
         }
+
         .copy-btn:hover {
-            background-color: #218838;
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+        }
+
+        /* Flash (optional, if you add messages here later) */
+        .flash-messages {
+            margin: 12px 0 6px;
+        }
+
+        .flash-message {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            line-height: 1.4;
+            background: rgba(255, 255, 255, .03);
+        }
+
+        .flash-message.success {
+            border-color: rgba(34, 197, 94, .6);
+            color: #86efac;
+            background: rgba(6, 95, 70, .25);
+        }
+
+        .flash-message.error {
+            border-color: rgba(239, 68, 68, .6);
+            color: #fecaca;
+            background: rgba(127, 29, 29, .25);
+        }
+
+        @media (max-width: 720px) {
+            .topbar-inner {
+                padding: 12px 14px;
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-links a {
+                padding: 8px 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .nav-links a,
+            .copy-btn {
+                transition: none !important;
+            }
         }
     </style>
 </head>
+
 <body>
+    <!-- Top navigation bar -->
+    <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Secure File Storage</div>
+      <nav class="nav-links" aria-label="Main">
+        <a href="{{ url_for('index') }}">Dashboard</a>
+        <a href="{{ url_for('list_files') }}">My Files</a>
+        <a class="active" href="{{ url_for('get_public_key') }}">My Public Key</a>
+        <a href="{{ url_for('blockchain_status') }}">Blockchain Status</a>
+        <a href="{{ url_for('shared_files') }}">Shared Files</a>
+        <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+    </div>
+  </div>
+
     <div class="container">
-        <h1>🔑 My Public Key</h1>
-        
-        <div class="nav">
-            <a href="{{ url_for('index') }}">Dashboard</a>
-            <a href="{{ url_for('list_files') }}">My Files</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+        <div class="header">
+            <h1>My Public Key</h1>
+            <p class="muted">Share this key so others can verify your digital signatures</p>
         </div>
-        
-        <div class="key-section">
-            <h3>ECDSA Public Key for Digital Signatures</h3>
-            <p><strong>Owner:</strong> {{ user_email }}</p>
-            <p><strong>Algorithm:</strong> ECDSA with SHA-256</p>
-            <p><strong>Curve:</strong> SECP256R1 (P-256)</p>
-            
-            <div class="public-key" id="publicKey">{{ public_key }}</div>
-            <button class="copy-btn" onclick="copyPublicKey()">📋 Copy Public Key</button>
-        </div>
-        
-        <div class="info-section">
-            <h4>🔐 How Digital Signatures Work:</h4>
-            <ul>
-                <li><strong>Signing:</strong> When you upload a file, it's signed with your private key</li>
-                <li><strong>Verification:</strong> Anyone can verify the signature using this public key</li>
-                <li><strong>Integrity:</strong> Signatures prove the file hasn't been tampered with</li>
-                <li><strong>Authenticity:</strong> Signatures prove the file came from you</li>
-            </ul>
-        </div>
-        
-        <div class="info-section">
-            <h4>📋 How to Use This Public Key:</h4>
-            <ol>
-                <li>Share this public key with others who need to verify your files</li>
-                <li>They can use it to verify that files were actually signed by you</li>
-                <li>If signature verification fails, the file may have been tampered with</li>
-                <li>This provides cryptographic proof of file authenticity and integrity</li>
-            </ol>
-        </div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            <p><strong>🔒 Security Note:</strong> This is your public key - it's safe to share. Your private key remains encrypted and secure.</p>
+
+        <div class="content">
+            <div class="card key-section">
+                <h3 style="margin-top:0;">ECDSA Public Key</h3>
+                <p class="muted" style="margin:6px 0 12px;">
+                    <strong>Owner:</strong> {{ user_email }} • <strong>Algorithm:</strong> ECDSA (SHA-256) •
+                    <strong>Curve:</strong> P-256
+                </p>
+                <div class="public-key" id="publicKey">{{ public_key }}</div>
+                <button class="copy-btn" onclick="copyPublicKey()">Copy Public Key</button>
+            </div>
+
+            <div class="card info-section">
+                <h4 style="margin-top:0;">How Digital Signatures Work</h4>
+                <ul style="margin:8px 0 0 18px;">
+                    <li><strong>Signing:</strong> Files you upload are signed with your private key.</li>
+                    <li><strong>Verification:</strong> Anyone can verify using your public key.</li>
+                    <li><strong>Integrity:</strong> Detects any tampering with file contents.</li>
+                    <li><strong>Authenticity:</strong> Proves the file originated from you.</li>
+                </ul>
+            </div>
+
+            <div class="card info-section">
+                <h4 style="margin-top:0;">How to Use This Public Key</h4>
+                <ol style="margin:8px 0 0 18px;">
+                    <li>Share this key with recipients who need to verify your files.</li>
+                    <li>They verify that your uploaded file’s signature matches this key.</li>
+                    <li>If verification fails, the file or signature is invalid or altered.</li>
+                    <li>This provides cryptographic proof of integrity and authorship.</li>
+                </ol>
+            </div>
+
+            <p class="muted" style="text-align:center; margin-top:18px;">
+                <strong>Security Note:</strong> Your public key is safe to share. Your private key stays encrypted and
+                never leaves the server.
+            </p>
         </div>
     </div>
-    
+
     <script>
         function copyPublicKey() {
-            const publicKeyElement = document.getElementById('publicKey');
-            const text = publicKeyElement.textContent;
-            
-            navigator.clipboard.writeText(text).then(function() {
+            const el = document.getElementById('publicKey');
+            const text = el.textContent;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Public key copied to clipboard!');
+                }).catch(fallbackCopy);
+            } else {
+                fallbackCopy();
+            }
+            function fallbackCopy() {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); } catch (e) { }
+                document.body.removeChild(ta);
                 alert('Public key copied to clipboard!');
-            }, function(err) {
-                console.error('Could not copy text: ', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('Public key copied to clipboard!');
-            });
+            }
         }
     </script>
 </body>
+
 </html>
-
-
